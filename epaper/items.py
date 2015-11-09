@@ -40,7 +40,6 @@ class PageItem(Item):
     url = Field()
     image = Field()
     fetch_date = Field()
-    referer = Field()
 
     
 class ArticleItem(Item):

@@ -15,12 +15,13 @@ BOT_NAME = 'epaper'
 
 SPIDER_MODULES = ['epaper.spiders']
 NEWSPIDER_MODULE = 'epaper.spiders'
-ITEM_PIPELINES = [
-    'epaper.pipelines.SaveJSONPipeline'
-]
+ITEM_PIPELINES = {
+    'epaper.pipelines.SavePipeline':100,
+}
 #LOG_FILE = '%s/log/%s_ace.log' %(PROJECT_ROOT,datetime.today().strftime('%Y-%m-%d'))
 LOG_LEVEL = 'INFO'
-IMAGES_PATH = os.path.join(PROJECT_ROOT, 'images')
-JSON_PATH = os.path.join(PROJECT_ROOT, 'json')
+IMAGES_PATH = os.path.join(PROJECT_ROOT,'..','data', 'images')
+JSON_PATH = os.path.join(PROJECT_ROOT,'..','data', 'json')
+XML_PATH = os.path.join(PROJECT_ROOT,'..','data', 'xml')
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'epaper (+http://www.yourdomain.com)'

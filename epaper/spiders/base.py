@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from scrapy.spiders import Spider
+from scrapy.spiders.crawl import CrawlSpider
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
 
-class EpaperSpider(Spider):
+class EpaperSpider(CrawlSpider):
 
     publish_date = datetime.today() 
 
