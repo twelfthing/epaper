@@ -33,7 +33,6 @@ class SavePipeline(object):
             if not spider.paper['articles'].get(item['referer']):
                 spider.paper['articles'][item['referer']] = []
             spider.paper['articles'][item['referer']].append(dict(item))
-            print item['referer']
         return item
 
     def __get_xml_element(self, spider):
