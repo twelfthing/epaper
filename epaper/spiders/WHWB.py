@@ -72,7 +72,7 @@ class WHWBSpider(EpaperSpider):
                 break
         image_links = x.xpath('//td[@class="font6"]//img//@src').extract()
         image_descs = [''.join(i.xpath('text()').extract()) for i in x.xpath('//td[@class="font6"]//img/../p')]
-        article['images'] = [{'origin':im[0], 'desc':im[1]} for im in zip(image_links,image_descs)]
+        article['images'] = [{'origin':urljoin(response.url,im[0]), 'desc':im[1]} for im in zip(image_links,image_descs)]
        
         return article
 
