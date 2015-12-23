@@ -23,5 +23,7 @@ LOG_LEVEL = 'INFO'
 IMAGES_PATH = os.path.join(PROJECT_ROOT,'..','data', 'images')
 JSON_PATH = os.path.join(PROJECT_ROOT,'..','data', 'json')
 XML_PATH = os.path.join(PROJECT_ROOT,'..','data', 'xml')
+
+STATS_CLASS = 'epaper.stats.RealTimeStatsCollector'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'epaper (+http://www.yourdomain.com)'

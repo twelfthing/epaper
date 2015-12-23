@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 from urlparse import urljoin
 from datetime import datetime
 
@@ -36,7 +37,6 @@ class BJCBSpider(EpaperSpider):
         x = Selector(response)
         reqs = []
         page = PageItem()
-        print response.url
         page['image'] = {'origin':urljoin(response.url, x.xpath('//img[@usemap="#PagePicMap"]/@src').extract()[0])}
         page['number'] = x.xpath('//td[@width="49%"]/span[@class="orange2"]/text()').extract()[0].split(u'：')[0].strip()
         page['name'] = ''.join(x.xpath('//td[@width="49%"]/span[@class="blue2"]/text()').extract())
