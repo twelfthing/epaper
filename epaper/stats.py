@@ -18,10 +18,12 @@ class RealTimeStatsCollector(MemoryStatsCollector):
 
     def set_value(self, key, value, spider=None):
         self._stats[key] = value
-        self._stats['start_time'] = ''
-        self._stats['finish_time'] = ''
-        print json.dumps(self._stats)
-        red.publish('spider.stats', json.dumps(self._stats))
+        self._stats['start_time'] = self._stats['start_time'].strftime('%Y-%m-%d %H:%M:%S')
+        self._stats['finish_time'] = self._stats['finish_time'].strftime('%Y-%m-%d %H:%M:%S')
+
+
+        djson = {'name': self.spider_name, 'data':self._stats}
+        red.publish('spider.stats', json.dumps(djson))
 
     def set_stats(self, stats, spider=None):
         self._stats = stats
@@ -32,3 +34,6 @@ class RealTimeStatsCollector(MemoryStatsCollector):
 
     def clear_stats(self, spider=None):
         self._stats.clear()
+
+    def open_spider(self, spider):
+        self.spider_name = spider.name

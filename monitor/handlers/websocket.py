@@ -23,12 +23,20 @@ class WSHandler(WebSocketHandler):
         self.listen()
 
     def on_message(self, message):
-        if message.kind == 'message':
-            return
-        for client in clients:
-            client.write_message(message.body)
+        if (isinstance(message, unicode)):
+            pass
+        else:
+            if message.kind == 'message':
+                for client in clients:
+                    client.write_message(message.body)
+            elif message.kind == 'disconnect':
+                clients.remove(self)
+                self.close()
+
+
+
     @tornado.gen.coroutine
     def listen(self):
-        toredis.subscribe('spider.stats')
+        yield tornado.gen.Task(toredis.subscribe,'spider.stats')
         toredis.listen(self.on_message)
 
