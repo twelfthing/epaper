@@ -10,6 +10,7 @@
 * 南京日报
 * 北京晚报
 * 北京晨报
+* 楚天都市报
     
 持续更新中......
 ##Monitor System Base On Tornado

@@ -55,6 +55,7 @@ class NFRBSpider(EpaperSpider):
         reqs.append(page)
         for href in x.xpath('//area/@href').extract():
             reqs.append(Request(urljoin(response.url,href),callback=self.parse_article))
+        self._set_coords(response, x)
         return reqs
 
     def parse_article(self, response):
@@ -67,13 +68,7 @@ class NFRBSpider(EpaperSpider):
         n['url'] = response.url
         n['referer'] = response.request.headers.get('Referer',None)
         n['content'] = u'\n'.join(x.xpath('//founder-content//p//text()').extract())
-        areas = x.xpath('//area')
-        for a in areas:
-            href = a.xpath('@href').extract()[0].strip()
-            coords = a.xpath('@coords').extract()[0]
-            if n['url'] == urljoin(response.url, href):
-                n['coords'] = coords
-                break
+        n['coords'] = self.coords[response.url]
         image_links = x.xpath('//table[@width="400"]//img//@src').extract()
         #image_descs = x.xpath('//table[@width="400"]//img/../../../tr[2]//text()').extract()
         n['images'] = [{'origin':urljoin(response.url,im)} for im in image_links]  
