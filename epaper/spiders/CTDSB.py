@@ -13,22 +13,21 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from epaper.items import PaperItem, PageItem, ArticleItem
 from epaper.spiders.base import EpaperSpider
 
-class BJCBSpider(EpaperSpider):
+class CTDSBSpider(EpaperSpider):
 
-    name = 'BJCB-BJ'
+    name = 'CTDSB-HB'
 
-    zh_name = u'北京晨报'
+    zh_name = u'楚天都市报'
 
     publish_date = datetime.today() 
     
-    base_url = 'http://bjcb.morningpost.com.cn/html/%s' % publish_date.strftime('%Y-%m/%d')
+    base_url = 'http://ctdsb.cnhubei.com/HTML/ctdsb/%s' % publish_date.strftime('%Y%m%d')
 
-    start_urls = ['%s/node_2.htm' % base_url,]
+    start_urls = ['%s/ctdsb1.html' % base_url,]
 
     rules = (
         Rule(
-            LinkExtractor(allow=('%s/node_\d+\.htm' % base_url),
-            deny=('%s/node_1\.htm' % base_url)),
+            LinkExtractor(allow=('%s/ctdsb\d+.html' % base_url),),
             'parse_page',
             follow = True,
         ),
@@ -39,9 +38,8 @@ class BJCBSpider(EpaperSpider):
         x = Selector(response)
         reqs = []
         page = PageItem()
-        page['image'] = {'origin':urljoin(response.url, x.xpath('//img[@usemap="#PagePicMap"]/@src').extract()[0])}
-        page['number'] = x.xpath('//td[@width="49%"]/span[@class="orange2"]/text()').extract()[0].split(u'：')[0].strip()
-        page['name'] = ''.join(x.xpath('//td[@width="49%"]/span[@class="blue2"]/text()').extract())
+        page['image'] = {'origin':urljoin(response.url, x.xpath('//img[@usemap="#FPMap0"]/@src').extract()[0])}
+        page['number'], page['name'] = ''.join(x.xpath('//td[@bgcolor="#004D95"]/span[@class="STYLE1"]/text()').extract()).split()
         page['url'] = response.url
         reqs.append(page)
         for href in x.xpath('//area/@href').extract():
@@ -52,14 +50,14 @@ class BJCBSpider(EpaperSpider):
     def parse_article(self, response):
         x = Selector(response)
         n = ArticleItem()
-        n['leadtitle'] = u''
-        n['title'] = u''.join(x.xpath('//td[@class="title_a"]/text()').extract()).strip()
-        n['subtitle'] = u''.join(x.xpath('//span[@class="subtitle"]/text()').extract()).strip()
+        n['leadtitle'] = u''.join(x.xpath('//table[@id="Table17"]/tr[0]//text()').extract()).strip()
+        n['title'] = u''.join(x.xpath('//table[@id="Table17"]/tr[1]//text()').extract()).strip()
+        n['subtitle'] = u''.join(x.xpath('//table[@id="Table17"]/tr[3]//text()').extract()).strip()
         n['url'] = response.url
         n['referer'] = response.request.headers.get('Referer',None)
-        n['content'] = u'\n'.join(x.xpath('//founder-content//p/text()').extract())
+        n['content'] = u'\n'.join(x.xpath('//div[@id="copytext"]/font/text()').extract())
         n['coords'] = self.coords[response.url]
-        n['images'] = [{'origin':im} for im in x.xpath('//table[@width="315"]//img/@src').extract()]
+        n['images'] = [{'origin':im} for im in x.xpath('//div[@id="copytext"]//img/@src').extract()]
         
         return n
 

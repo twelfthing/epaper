@@ -14,7 +14,9 @@ from epaper.spiders.base import EpaperSpider
 
 class JFRBSpider(EpaperSpider):
 
-    name = '解放日报'
+    name = 'JFRB-SH'
+
+    zh_name = u'解放日报'
 
     publish_date = datetime.today() 
     

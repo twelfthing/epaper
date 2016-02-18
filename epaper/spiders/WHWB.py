@@ -14,7 +14,9 @@ from epaper.spiders.base import EpaperSpider
 
 class WHWBSpider(EpaperSpider):
 
-    name = '武汉晚报'
+    name = 'WHWB-HB'
+
+    zh_name = u'武汉晚报'
 
     publish_date = datetime.today() 
     

@@ -7,6 +7,7 @@
 
 import json
 import redis
+import datetime
 from scrapy.statscollectors import MemoryStatsCollector
 
 red = redis.Redis()
@@ -18,8 +19,10 @@ class RealTimeStatsCollector(MemoryStatsCollector):
 
     def set_value(self, key, value, spider=None):
         self._stats[key] = value
-        self._stats['start_time'] = self._stats['start_time'].strftime('%Y-%m-%d %H:%M:%S')
-        self._stats['finish_time'] = self._stats['finish_time'].strftime('%Y-%m-%d %H:%M:%S')
+        if 'start_time' in self._stats and isinstance(self._stats['start_time'], datetime.datetime):
+            self._stats['start_time'] = self._stats['start_time'].strftime('%Y-%m-%d %H:%M:%S')
+        if 'finish_time' in self._stats and isinstance(self._stats['finish_time'], datetime.datetime):
+            self._stats['finish_time'] = self._stats['finish_time'].strftime('%Y-%m-%d %H:%M:%S')
 
 
         djson = {'name': self.spider_name, 'data':self._stats}

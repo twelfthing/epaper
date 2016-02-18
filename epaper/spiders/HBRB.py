@@ -15,7 +15,9 @@ from epaper.spiders.base import EpaperSpider
 
 class HBRBSpider(EpaperSpider):
 
-    name = '湖北日报'
+    name = 'HBRB-HB'
+
+    zh_name = u'湖北日报'
 
     publish_date = datetime.today() 
 

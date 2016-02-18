@@ -37,7 +37,7 @@ class SavePipeline(object):
 
     def __get_xml_element(self, spider):
         
-        paper = etree.Element('Paper', PaperName=spider.paper['name'], PublishDate=spider.paper['publish_date'], PaperUrl=spider.paper['url'],PaperImageSrc=spider.paper['image']['origin'])
+        paper = etree.Element('Paper', PaperName=spider.paper['zh_name'], PublishDate=spider.paper['publish_date'], PaperUrl=spider.paper['url'],PaperImageSrc=spider.paper['image']['origin'])
         page_list = etree.SubElement(paper, 'PageList')
         for page in spider.paper['pages']:
             
