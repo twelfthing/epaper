@@ -6,16 +6,40 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import os
 import json
+import hashlib
 from datetime import datetime
 
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
+from scrapy.http import Request
+from scrapy.pipelines.images import ImagesPipeline
 from lxml import etree
 
 import settings
 from items import PaperItem,PageItem,ArticleItem
 
 
+class SaveImagePipeline(ImagesPipeline):
+    def get_media_requests(self, item, info):
+        if item.get('images'):
+            return [Request(x['origin']) for x in item.get('images')]
+        if item.get('image'):
+            return [Request(item['image']['origin'])]
+
+
+
+    def item_completed(self, results, item, info):
+        for index,rs in enumerate(results):
+            if rs[0]:
+                if item.get('image'):
+                    item['image']['location'] = rs[1]['path']
+                if item.get('images'):
+                    item['images'][index]['location'] = rs[1]['path']
+        return item
+
+    def file_path(self, request, response=None, info=None):
+        image_guid = hashlib.sha1(request.url).hexdigest()
+        return info.spider.publish_date.strftime('%Y-%m/%Y-%m-%d/') + image_guid
 class SavePipeline(object):
 
     def __init__(self):
@@ -36,7 +60,6 @@ class SavePipeline(object):
         return item
 
     def __get_xml_element(self, spider):
-        
         paper = etree.Element('Paper', PaperName=spider.zh_name, PublishDate=spider.paper['publish_date'], PaperUrl=spider.paper['url'],PaperImageSrc=spider.paper['image']['origin'])
         page_list = etree.SubElement(paper, 'PageList')
         for page in spider.paper['pages']:
@@ -54,7 +77,7 @@ class SavePipeline(object):
                 etree.SubElement(article_ele, 'ArticleUrl').text = article.get('url','')
                 image_list_ele = etree.SubElement(article_ele, 'ImageList')   
                 for im in article.get('images'):
-                    etree.SubElement(image_list_ele, 'Image',Name=im['origin']).text = im.get('desc','')
+                    etree.SubElement(image_list_ele, 'Image',Name=im['location']).text = im.get('desc','')
                 point_list = etree.SubElement(article_ele, 'PointList')
                 if article['coords']:
                     point_list.text = article['coords']
@@ -74,7 +97,7 @@ class SavePipeline(object):
                 path = os.path.join(settings.JSON_PATH,spider.publish_date.strftime('%Y-%m-%d'),spider.name+'.json')
                 with open(path,'w') as file_json:
                     file_json.write(json.dumps(spider.paper))
-            if hasattr(settings,'IMAGES_PATH'):
+            if hasattr(settings,'XML_PATH'):
                 base_path = os.path.join(settings.XML_PATH,spider.publish_date.strftime('%Y-%m-%d'))
                 if not os.path.isdir(base_path):
                     os.mkdir(base_path)

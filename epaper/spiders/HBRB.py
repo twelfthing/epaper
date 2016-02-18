@@ -6,7 +6,7 @@ from datetime import datetime
 from scrapy.http import Request
 from scrapy.spiders import Rule
 from scrapy.selector import Selector
-from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.linkextractors import LinkExtractor
 
 from epaper.items import PaperItem, PageItem, ArticleItem
 from epaper.spiders.base import EpaperSpider

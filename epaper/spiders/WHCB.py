@@ -32,17 +32,6 @@ class  WHCBSpider(EpaperSpider):
         ),
     )
 
-    def parse_start_url(self, response):
-        reqs = self.parse_page(response)
-        x = Selector(response)
-        paper = PaperItem()
-        paper['name'] = self.name.decode('utf-8')
-        paper['publish_date'] = self.publish_date.strftime('%Y-%m-%d')
-        paper['url'] = response.url
-        paper['image'] = reqs[0]['image']
-        reqs.append(paper)
-        for e in reqs:
-            yield e
 
     def parse_page(self, response):
         x = Selector(response)
@@ -54,6 +43,7 @@ class  WHCBSpider(EpaperSpider):
         reqs.append(page)
         for href in x.xpath('//area/@href').extract():
             reqs.append(Request(urljoin(response.url,href),callback=self.parse_article))
+        self._set_coords(response, x)
         return reqs
 
     def parse_article(self, response):
@@ -66,13 +56,7 @@ class  WHCBSpider(EpaperSpider):
         article['url'] = response.url
         article['referer'] = response.request.headers.get('Referer',None)
         article['content'] = u'\n'.join(x.xpath('//div[@id="ozoom"]//p/text()').extract())
-        areas = x.xpath('//area')
-        for a in areas:
-            href = a.xpath('@href').extract()[0].strip()
-            coords = a.xpath('@coords').extract()[0]
-            if article['url'] == urljoin(response.url, href):
-                article['coords'] = coords
-                break
+        article['coords'] = self.coords[response.url]
         image_links = x.xpath('//td[@class="font6"]//img//@src').extract()
         image_descs = [''.join(i.xpath('text()').extract()) for i in x.xpath('//td[@class="font6"]//img/../p')]
         article['images'] = [{'origin':urljoin(response.url,im[0]), 'desc':im[1]} for im in zip(image_links,image_descs)]

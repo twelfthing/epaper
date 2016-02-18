@@ -17,10 +17,11 @@ SPIDER_MODULES = ['epaper.spiders']
 NEWSPIDER_MODULE = 'epaper.spiders'
 ITEM_PIPELINES = {
     'epaper.pipelines.SavePipeline':100,
+    'epaper.pipelines.SaveImagePipeline':90,
 }
 #LOG_FILE = '%s/log/%s_ace.log' %(PROJECT_ROOT,datetime.today().strftime('%Y-%m-%d'))
 LOG_LEVEL = 'INFO'
-IMAGES_PATH = os.path.join(PROJECT_ROOT,'..','data', 'images')
+IMAGES_STORE = os.path.join(PROJECT_ROOT,'..','data', 'images')
 JSON_PATH = os.path.join(PROJECT_ROOT,'..','data', 'json')
 XML_PATH = os.path.join(PROJECT_ROOT,'..','data', 'xml')
 
